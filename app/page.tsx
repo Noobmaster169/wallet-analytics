@@ -28,7 +28,7 @@ export default function Home() {
       </div>
     </div>
     <main className="flex flex-col items-center justify-start min-h-screen">
-      <div>Hello World</div>
+      <div>Hello World!</div>
     </main>
     </>
   );
