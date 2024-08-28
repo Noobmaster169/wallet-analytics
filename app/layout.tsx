@@ -1,13 +1,19 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
+import NavBar from "@/components/Navbar";
 import AppWalletProvider from "../components/AppWalletProvider";
 
-const inter = Inter({ subsets: ["latin"] });
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-poppins"
+});
+
 
 export const metadata: Metadata = {
-  title: "Blink DApp",
-  description: "DApp for Quadratic Funding using Solana Blinks",
+  title: "Wallet Analytic App",
+  description: "App for Solana Wallet Analytics",
 };
  
 export default function RootLayout({
@@ -17,8 +23,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-        <AppWalletProvider>{children}</AppWalletProvider>
+      <body className={poppins.variable}>
+        <AppWalletProvider>
+        <div className="h-[100vh]">
+          {/*<NavBar />*/}
+          <div className="pt-15">
+            <div className="h-[100vh] pt-24">
+              {children}
+            </div>
+          </div>
+        </div>
+        </AppWalletProvider>
       </body>
     </html>
   );

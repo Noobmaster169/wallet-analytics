@@ -2,6 +2,8 @@
 
 import dynamic from 'next/dynamic'; 
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import NavBar from "../components/Navbar";
+import WalletInfo from "../components/WalletInfo";
 
 import { useAnchorWallet, useConnection, useWallet } from '@solana/wallet-adapter-react'
 import { clusterApiUrl, Connection, PublicKey, SystemProgram } from "@solana/web3.js";
@@ -19,17 +21,15 @@ export default function Home() {
   
   return (
     <>
-    <div className="navbar flex justify-between">
-      <div className="headerContainer">
-        <h1 className="header">My Blink DApp</h1>
-      </div>
-      <div className="headerContainer walletButton">
+    <div className="pb-10">
+      <div className="flex flex-col px-72 items-center justify-center h-2/3">
+        <NavBar />
         <WalletMultiButtonDynamic style={{background:"#222222"}} />
+        <div>hello world</div>
+      
+    
       </div>
     </div>
-    <main className="flex flex-col items-center justify-start min-h-screen">
-      <div>Hello World!</div>
-    </main>
     </>
   );
 }
