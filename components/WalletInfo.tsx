@@ -125,7 +125,7 @@ export default function WalletInfo() {
         if(publicKey){
             if(!loadingTransaction){return}
             try{
-                const res = await connection.getSignaturesForAddress(new PublicKey(publicKey), /*{limit: 15}*/)
+                const res = await connection.getSignaturesForAddress(new PublicKey(publicKey), {limit: 30})
                 setSignatures(res);
                 const transactions = await addTransactions(res);
                 if(transactions){
