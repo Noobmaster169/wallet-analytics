@@ -22,12 +22,9 @@ export default function Home() {
   return (
     <>
     <div className="pb-10">
-      <div className="flex flex-col px-72 items-center justify-center h-2/3">
+      <div className="w-screen flex flex-col items-center justify-center h-2/3">
         <NavBar />
-        <WalletMultiButtonDynamic style={{background:"#222222"}} />
-        <div>hello world</div>
-      
-    
+        <WalletInfo/>
       </div>
     </div>
     </>
