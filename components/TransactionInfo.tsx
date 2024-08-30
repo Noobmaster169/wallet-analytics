@@ -95,7 +95,6 @@ function TransactionItem({txInfo}: TransactionItemProps){
     }
 
     async function getMetadata(address:string){
-        console.log("Searching Token with address", address)
         const mintAddress = new PublicKey(address);
         const metadataAccount = metaplex
             .nfts()
@@ -106,10 +105,8 @@ function TransactionItem({txInfo}: TransactionItemProps){
         if (metadataAccountInfo && address) {
             const token :any = await metaplex.nfts().findByMint({ mintAddress: mintAddress });
             if(token.json){
-                console.log("Token Metadata Result:", token);
                 setTokenName(token.symbol);
                 setTokenLogo(token.json.image);
-                console.log("Metadata Found:", token.symbol)
                 setLoading(false);
                 return
             }
@@ -131,7 +128,6 @@ function TransactionItem({txInfo}: TransactionItemProps){
             if(token){
                 setTokenName(token.symbol);
                 setTokenLogo(token.logoURI);
-                console.log("Metadata Found")
                 setLoading(false);
             }
         }catch(e){
@@ -142,10 +138,8 @@ function TransactionItem({txInfo}: TransactionItemProps){
 
     async function compileData(){
         if(txInfo.note){
-            console.log("Compiling Data:", txInfo.note)
             await getMetadata(txInfo.note[0].mintAddress);
             if(txInfo.note.length>1){
-                console.log("Double Data Detected")
                 addSubItem(txInfo)
             }
         }

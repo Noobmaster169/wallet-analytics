@@ -121,7 +121,7 @@ export default function WalletInfo() {
     }
 
     async function getSignatures(){
-        console.log("Getting Signatures")
+        console.log("Getting Signatures...")
         if(publicKey){
             if(!loadingTransaction){return}
             try{
@@ -131,7 +131,6 @@ export default function WalletInfo() {
                 if(transactions){
                     setTxData(transactions);
                 }
-                console.log("Loading Set to False")
                 setLoadingTransaction(false);
             }catch(error){
                 console.log("Error:", error);
