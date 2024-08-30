@@ -196,7 +196,7 @@ export default function WalletInfo() {
           </div>
         </div>
 
-        {publicKey? <TransactionInfo signatures={signatures} loadingTransaction={loadingTransaction} txData={txData}/>: <div className="m-3 md:m-6 bg-grey-700"><WalletMultiButtonDynamic style={{}} /></div>}
+        {publicKey? <TransactionInfo loadingTransaction={loadingTransaction} txData={txData}/>: <div className="m-3 md:m-6 bg-grey-700"><WalletMultiButtonDynamic style={{}} /></div>}
       </>
     );
   }

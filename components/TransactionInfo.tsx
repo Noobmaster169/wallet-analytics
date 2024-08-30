@@ -1,6 +1,6 @@
 "use client";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { LAMPORTS_PER_SOL, PublicKey, Connection } from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, PublicKey, Connection, Transaction } from "@solana/web3.js";
 import { useEffect, useState } from "react";
 import { FaCopy } from "react-icons/fa";
 import { FaRegCheckCircle } from "react-icons/fa";
@@ -11,32 +11,29 @@ import Image from "next/image";
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { Metaplex } from "@metaplex-foundation/js";
 
-export default function TransactionInfo({signatures, loadingTransaction, txData}) {
-    const connection = new Connection("https://solana-mainnet.g.alchemy.com/v2/oeNnUfr7Hd7_6FP8bkciJLc4LhVh1HSO")
-    const metaplex = Metaplex.make(connection);
+interface TransactionInfoProps {
+    loadingTransaction: boolean;
+    txData: TxInfo[];
+}
+interface TransactionItemProps{
+    txInfo: TxInfo;
+}
+
+interface TxInfo{
+    slot:number;
+    transaction: any;
+    blockTime:number;
+    meta:any;
+    note: TxChange[];
+}
+
+interface TxChange{
+    amount: number;
+    mintAddress: string;
+}
+
+export default function TransactionInfo({loadingTransaction, txData}: TransactionInfoProps) {
     const mintAddress = new PublicKey("DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263");
-
-    const findToken = async () =>{
-        console.log("Searching for Token")
-        let tokenName;
-        let tokenSymbol;
-        let tokenLogo;
-
-        const metadataAccount = metaplex
-            .nfts()
-            .pdas()
-            .metadata({ mint: mintAddress });
-
-        const metadataAccountInfo = await connection.getAccountInfo(metadataAccount);
-        if (metadataAccountInfo) {
-            const token = await metaplex.nfts().findByMint({ mintAddress: mintAddress });
-            if(token){
-                console.log(token);
-                console.log(token.symbol);
-                console.log(token.json.image) 
-            }
-        }
-    }
 
     const convertBlockDate = (blockTime:number)=>{
         return moment.unix(blockTime).format("YYYY-MM-DD")
@@ -48,7 +45,7 @@ export default function TransactionInfo({signatures, loadingTransaction, txData}
           <h3 className="text-xl md:text-3xl text-center font-semibold text-green-400 mb-3">Transaction History</h3>
           <div className="mt-4 w-auto flex flex-col itmes-center">    
             <div className="my-1 px-5 flex flex-row justify-between items-center rounded-lg font-bold text-xl">
-                {/*<div className="hidden xl:block text-green-400">*/}
+                {/* Transaction Data Titles */}
                 <div className="flex flex-row justify-center items-center w-20 md:w-40">
                     Tx Signature
                 </div>
@@ -63,19 +60,18 @@ export default function TransactionInfo({signatures, loadingTransaction, txData}
                     <div className="w-28 flex flex-row justify-center">Token</div>
                 </div>
             </div>              
-            {loadingTransaction? <div className="flex flex-row justify-center text-2xl font-semibold my-4 mt-10">Loading...</div>: txData.map((item:any, key:any)=> {
-            return(
+            {loadingTransaction? <div className="flex flex-row justify-center text-2xl font-semibold my-4 mt-10">Loading...</div>: txData.map((item:any, key:any)=> 
                 <div key={key}>
                     {item.date? <div className="mx-5 mt-2 font-semibold text-gray-500 text-lg md:text-xl">{item.date}</div> : ""}
                     <TransactionItem txInfo={item}/>
-                </div>);
-            })}
+                </div>
+            )}
           </div>
           </div>
       </div>)
 }
 
-function TransactionItem({txInfo}){
+function TransactionItem({txInfo}: TransactionItemProps){
     const connection = new Connection("https://solana-mainnet.g.alchemy.com/v2/oeNnUfr7Hd7_6FP8bkciJLc4LhVh1HSO")
     const metaplex = Metaplex.make(connection);
     const [copied, setCopied]= useState(false);
@@ -108,7 +104,7 @@ function TransactionItem({txInfo}){
 
         const metadataAccountInfo = await connection.getAccountInfo(metadataAccount);
         if (metadataAccountInfo && address) {
-            const token = await metaplex.nfts().findByMint({ mintAddress: mintAddress });
+            const token :any = await metaplex.nfts().findByMint({ mintAddress: mintAddress });
             if(token.json){
                 console.log("Token Metadata Result:", token);
                 setTokenName(token.symbol);
@@ -120,10 +116,18 @@ function TransactionItem({txInfo}){
         }
         const tokenListUrl = 'https://raw.githubusercontent.com/solana-labs/token-list/main/src/tokens/solana.tokenlist.json';
         try{
-            const response = await fetch(tokenListUrl);
-            const tokenList = await response.json();
+            interface Token {
+                address: string;
+                symbol: string;
+                name: string;
+                decimals: number;
+                logoURI: string;
+            }
 
-            const token = tokenList.tokens.find(t => t.address === address);
+            const response = await fetch(tokenListUrl);
+            const tokenList : {tokens:Token[]} = await response.json();
+
+            const token = tokenList.tokens.find((t:Token) => t.address === address);
             if(token){
                 setTokenName(token.symbol);
                 setTokenLogo(token.logoURI);
