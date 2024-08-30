@@ -8,7 +8,6 @@ import { AiOutlineExport } from "react-icons/ai";
 import { GrCircleQuestion } from "react-icons/gr";
 import moment from "moment";
 import Image from "next/image";
-import { Metadata } from '@metaplex-foundation/mpl-token-metadata';
 import { Metaplex } from "@metaplex-foundation/js";
 
 interface TransactionInfoProps {
@@ -33,12 +32,6 @@ interface TxChange{
 }
 
 export default function TransactionInfo({loadingTransaction, txData}: TransactionInfoProps) {
-    const mintAddress = new PublicKey("DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263");
-
-    const convertBlockDate = (blockTime:number)=>{
-        return moment.unix(blockTime).format("YYYY-MM-DD")
-    }
-
     return(
     <div className="w-screen flex justify-center items-center">
         <div className="w-11/12 md:w-10/12 m-8 sm:m-12 mb-1 p-4 md:p-6 bg-gray-800 rounded-xl shadow-md overflow-hidden flex flex-col justify-between">
