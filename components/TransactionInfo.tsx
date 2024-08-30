@@ -179,10 +179,10 @@ function TransactionItem({txInfo}: TransactionItemProps){
                     </div>
                     <div className="w-28 font-semibold p-2 flex flex-row justify-end items-center">
                         {txInfo.note?
-                            <>
+                            <a className="flex flew-row justify-end items-center hover:text-green-700" href={`https://solscan.io/token/${txInfo.note[0].mintAddress}`} target="_blank">
                             <div className="mr-2">{tokenName}</div>
                             <div>{tokenLogo? <Image className="ml-2" src={tokenLogo} alt={tokenName} width="30" height="30"/> : <GrCircleQuestion width="30" height="30"/>}</div>
-                            </>
+                            </a>
                         : "-"}
                     </div>
                     </> 
