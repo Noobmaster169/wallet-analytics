@@ -80,6 +80,7 @@ export default function WalletInfo() {
             const preTokenBalances = tx.meta.preTokenBalances;
             const postTokenBalances = tx.meta.postTokenBalances;
             for(let i=0; i<postTokenBalances.length; i++){
+                if(!postTokenBalances[i]){continue}
                 if(postTokenBalances[i].owner == publicKey){
                     let postOwnerBalance = postTokenBalances[i];
                     let preOwnerBalance = null;
