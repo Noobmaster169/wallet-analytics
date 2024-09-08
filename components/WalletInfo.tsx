@@ -221,10 +221,10 @@ export default function WalletInfo() {
         <div className="w-11/12 md:w-10/12 m-8 sm:m-12 p-4 md:p-6 mb-1 sm:mb-1 bg-gray-800 rounded-xl shadow-md overflow-hidden flex flex-col justify-between">
             <h3 className="text-xl md:text-3xl font-semibold text-green-400 text-center">Owned Tokens</h3>
             {loadingTokens? 
-                <div className="text-center">Loading...</div>:
+                <div className="p-4 font-semibold text-center">Loading...</div>:
                 <div>
                     <div className="my-1 px-5 flex flex-row items-center rounded-lg font-semibold text-lg">
-                        <div className="w-64 flex flex-row justify-between items-center font-semibold">Token</div>
+                        <div className="mx-10 w-48 flex flex-row justify-start text-center items-center font-semibold">Token</div>
                         <div>Amount</div>
                     </div>
                     {ownedTokens.map((token:any, key:number) => 
