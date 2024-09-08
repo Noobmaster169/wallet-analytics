@@ -36,29 +36,38 @@ export default function TransactionInfo({loadingTransaction, txData}: Transactio
     <div className="w-screen flex justify-center items-center">
         <div className="w-11/12 md:w-10/12 m-8 sm:m-12 mb-1 p-4 md:p-6 bg-gray-800 rounded-xl shadow-md overflow-hidden flex flex-col justify-between">
           <h3 className="text-xl md:text-3xl text-center font-semibold text-green-400 mb-3">Transaction History</h3>
-          <div className="mt-4 w-auto flex flex-col itmes-center">    
-            <div className="my-1 px-5 flex flex-row justify-between items-center rounded-lg font-bold text-xl">
-                {/* Transaction Data Titles */}
-                <div className="flex flex-row justify-center items-center w-20 md:w-40">
-                    Tx Signature
-                </div>
-                <div className="flex flex-row justify-center items-center hidden lg:block w-36">
-                    Block Number
-                </div>
-                <div className="flex flex-row justify-center text-center items-center w-48 hidden md:block">
-                    Timestamp
-                </div>
-                <div className="w-64 flex flex-row justify-between items-center font-semibold">
-                    <div className="w-32 flex flex-row justify-center">Amount</div>
-                    <div className="w-28 flex flex-row justify-center">Token</div>
-                </div>
-            </div>              
-            {loadingTransaction? <div className="flex flex-row justify-center text-2xl font-semibold my-4 mt-10">Loading...</div>: txData.map((item:any, key:any)=> 
-                <div key={key}>
-                    {item.date? <div className="mx-5 mt-2 font-semibold text-gray-500 text-lg md:text-xl">{item.date}</div> : ""}
-                    <TransactionItem txInfo={item}/>
-                </div>
-            )}
+          <div className="mt-4 w-auto flex flex-col itmes-center">             
+            {loadingTransaction? 
+            
+                <div className="flex flex-row justify-center text-2xl font-semibold my-4 mt-10">Loading...</div>: 
+                txData.length >= 0?
+                    <>
+                        <div className="my-1 px-5 flex flex-row justify-between items-center rounded-lg font-bold text-xl">
+                            {/* Transaction Data Titles */}
+                            <div className="flex flex-row justify-center items-center w-20 md:w-40">
+                                Tx Signature
+                            </div>
+                            <div className="flex flex-row justify-center items-center hidden lg:block w-36">
+                                Block Number
+                            </div>
+                            <div className="flex flex-row justify-center text-center items-center w-48 hidden md:block">
+                                Timestamp
+                            </div>
+                            <div className="w-64 flex flex-row justify-between items-center font-semibold">
+                                <div className="w-32 flex flex-row justify-center">Amount</div>
+                                <div className="w-28 flex flex-row justify-center">Token</div>
+                            </div>
+                        </div>   
+                        {txData.map((item:any, key:any)=> 
+                            <div key={key}>
+                                {item.date? <div className="mx-5 mt-2 font-semibold text-gray-500 text-lg md:text-xl">{item.date}</div> : ""}
+                                <TransactionItem txInfo={item}/>
+                            </div>
+                        )}                
+                    </>
+                :    
+                <div className="flex flex-row justify-center text-2xl font-semibold my-4 mt-10">No Transactions Detected</div>
+            }
           </div>
           </div>
       </div>)
@@ -76,7 +85,6 @@ function TransactionItem({txInfo}: TransactionItemProps){
     const convertBlockTime = (blockTime:number)=>{
         return moment.unix(blockTime).format("YYYY-MM-DD HH:mm:ss")
     }
-    
     const copyItem = (message:string)=>{
         navigator.clipboard.writeText(message).then(() => {
             setCopied(true);

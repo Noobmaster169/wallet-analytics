@@ -8,6 +8,7 @@ import { FaWallet } from "react-icons/fa";
 import { AiOutlineExport } from "react-icons/ai";
 import moment from "moment";
 import TransactionInfo from "./TransactionInfo";
+import TokenInfo from "./TokenInfo";
 
 const WalletMultiButtonDynamic = dynamic(
     async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
@@ -23,6 +24,9 @@ export default function WalletInfo() {
     const [txData, setTxData] = useState<any>([])
     const [copied, setCopied] = useState(true);
     const [loadingTransaction, setLoadingTransaction] = useState(true);
+    const [loadingTokens, setLoadingTokens] = useState(true);
+
+    const[ownedTokens, setOwnedTokens] = useState<any>([]);
    
     const convertBlockDate = (blockTime:number)=>{
         return moment.unix(blockTime).format("YYYY-MM-DD")
@@ -31,14 +35,25 @@ export default function WalletInfo() {
     async function getAccounts(){
         console.log("Fetching Program Accounts");
         if(!publicKey){return}
+        if(!loadingTokens){return}
         try{
+            const tokenData:any = []
             const tokenAccounts = await connection.getParsedTokenAccountsByOwner(publicKey, {
                 programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
             });
             tokenAccounts.value.forEach((accountInfo) => {
-                console.log("Token Account:", accountInfo.pubkey.toBase58());
-                console.log("Token Account Data:", accountInfo.account.data);
+                if(accountInfo.account.data.parsed.info.tokenAmount.uiAmount == 0){return}
+                tokenData.push({
+                    amount: accountInfo.account.data.parsed.info.tokenAmount.uiAmount,
+                    mintAddress: accountInfo.account.data.parsed.info.mint,
+                });
+                // console.log("Token Account:", accountInfo.pubkey.toBase58());
+                // console.log("Token Account Data:", accountInfo.account.data);
+                console.log("Token Mint Address:", accountInfo.account.data.parsed.info.mint);
+                console.log("Token Ammount:", accountInfo.account.data.parsed.info.tokenAmount.uiAmount);
             });
+            setOwnedTokens(tokenData);
+            setLoadingTokens(false);
         }catch(error){
             console.log("Error:", error);
         }
@@ -48,10 +63,10 @@ export default function WalletInfo() {
         let transactions = []
         let prevDate = ""
         for(let i=0; i<signatures.length; i++){
-            console.log("Getting Transaction:", i);
+            //console.log("Getting Transaction:", i);
             const item = signatures[i];
             const tx:any = await connection.getTransaction(item.signature, {maxSupportedTransactionVersion: 0});
-            console.log(tx);
+            //console.log(tx);
             
             const balanceChange = []
             // Keep Track of Solana Token Activity
@@ -82,7 +97,6 @@ export default function WalletInfo() {
             const postTokenBalances = tx.meta.postTokenBalances;
             for(let i=0; i<postTokenBalances.length; i++){
                 if(postTokenBalances[i] && preTokenBalances[i]){
-                    console.log("Post Balance Exist")
                 if(postTokenBalances[i].owner && preTokenBalances[i].owner){
                 if(postTokenBalances[i].owner == publicKey){
                     let postOwnerBalance = postTokenBalances[i];
@@ -150,6 +164,7 @@ export default function WalletInfo() {
     useEffect(() =>{
         if(publicKey){
             getSignatures();
+            getAccounts();
         }
     }, [publicKey])
 
@@ -202,7 +217,31 @@ export default function WalletInfo() {
           </div>
         </div>
 
-        {publicKey? <TransactionInfo loadingTransaction={loadingTransaction} txData={txData}/>: <div className="m-3 md:m-6 bg-grey-700"><WalletMultiButtonDynamic style={{}} /></div>}
+        <div className="w-screen flex justify-center items-center">
+        <div className="w-11/12 md:w-10/12 m-8 sm:m-12 p-4 md:p-6 mb-1 sm:mb-1 bg-gray-800 rounded-xl shadow-md overflow-hidden flex flex-col justify-between">
+            <h3 className="text-xl md:text-3xl font-semibold text-green-400 text-center">Owned Tokens</h3>
+            {loadingTokens? 
+                <div className="text-center">Loading...</div>:
+                <div>
+                    <div className="my-1 px-5 flex flex-row items-center rounded-lg font-semibold text-lg">
+                        <div className="w-64 flex flex-row justify-between items-center font-semibold">Token</div>
+                        <div>Amount</div>
+                    </div>
+                    {ownedTokens.map((token:any, key:number) => 
+                        <div key={key}>
+                            <TokenInfo amount={token.amount} mintAddress={token.mintAddress}/>
+                        </div>
+                    )}
+                </div>
+            }
+        </div>
+        </div>
+
+        {publicKey? 
+            <TransactionInfo loadingTransaction={loadingTransaction} txData={txData}/>
+            :
+            <div className="m-3 md:m-6 bg-grey-700"><WalletMultiButtonDynamic style={{}
+        } /></div>}
       </>
     );
   }
