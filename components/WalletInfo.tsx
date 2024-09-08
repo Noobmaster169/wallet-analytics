@@ -48,9 +48,10 @@ export default function WalletInfo() {
         let transactions = []
         let prevDate = ""
         for(let i=0; i<signatures.length; i++){
+            console.log("Getting Transaction:", i);
             const item = signatures[i];
             const tx:any = await connection.getTransaction(item.signature, {maxSupportedTransactionVersion: 0});
-            //console.log(tx);
+            console.log(tx);
             
             const balanceChange = []
             // Keep Track of Solana Token Activity
@@ -80,7 +81,9 @@ export default function WalletInfo() {
             const preTokenBalances = tx.meta.preTokenBalances;
             const postTokenBalances = tx.meta.postTokenBalances;
             for(let i=0; i<postTokenBalances.length; i++){
-                if(!postTokenBalances[i]){continue}
+                if(postTokenBalances[i] && preTokenBalances[i]){
+                    console.log("Post Balance Exist")
+                if(postTokenBalances[i].owner && preTokenBalances[i].owner){
                 if(postTokenBalances[i].owner == publicKey){
                     let postOwnerBalance = postTokenBalances[i];
                     let preOwnerBalance = null;
@@ -103,6 +106,9 @@ export default function WalletInfo() {
                         });
                     }
                 }
+                }
+                }
+                
             }
             if(balanceChange.length>0){
                 tx.note = balanceChange;
